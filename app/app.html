@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Time Doctor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+      (function() {
+        if (!process.env.HOT) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './dist/style.css';
+          // HACK: Writing the script path should be done with webpack
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+      }());
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      {
+        const scripts = [];
+
+        // Dynamically insert the DLL script in development env in the
+        // renderer process
+        if (process.env.NODE_ENV === 'development') {
+          scripts.push('../dll/renderer.dev.dll.js');
+        }
+
+        // Dynamically insert the bundled app script in the renderer process
+        const port = process.env.PORT || 1212;
+        scripts.push(
+          (process.env.HOT)
+            ? 'http://localhost:' + port + '/dist/renderer.dev.js'
+            : './dist/renderer.prod.js'
+        );
+
+        document.write(
+          scripts
+            .map(script => `<script defer src="${script}"><\/script>`)
+            .join('')
+        );
+      }
+    </script>
+    <script type="text/javascript">
+const electron = require('electron');
+const remote = require('electron').remote;
+var BrowserWindow = require('electron').remote.BrowserWindow;
+
+(function handleWindowControls() {
+    // When document has loaded, initialise
+    document.onreadystatechange = () => {
+        if (document.readyState == "complete") {
+            init();
+        }
+    };
+
+    function init() {
+        let window = remote.getCurrentWindow();
+        const maxButton = document.getElementById('max-button');
+            // restoreButton = document.getElementById('restore-button'),
+            // closeButton = document.getElementById('close-button');
+
+        // minButton.addEventListener("click", event => {
+        //     window = remote.getCurrentWindow();
+        //     window.minimize();
+        // });
+
+        maxButton.addEventListener("click", event => {
+            window = remote.getCurrentWindow();
+            window.setSize(400, 700);
+            window.center();
+            window.setMaximizable(false);
+            window.setMaximizable(false);
+            window.setAlwaysOnTop(false);
+            window.setResizable(false);
+            window.setSkipTaskbar(true);
+            window.setResizable(false);
+            window.setFullScreenable(false);
+            window.setMovable(true);
+        });
+
+        // restoreButton.addEventListener("click", event => {
+        //     window = remote.getCurrentWindow();
+        //     window.unmaximize();
+        //     toggleMaxRestoreButtons();
+        // });
+
+        // Toggle maximise/restore buttons when maximisation/unmaximisation
+        // occurs by means other than button clicks e.g. double-clicking
+        // the title bar:
+        // toggleMaxRestoreButtons();
+        // window.on('minimize', function(event){
+        //    event.preventDefault();
+        //    const displays = electron.screen.getAllDisplays();
+        //    const width=displays[0].size.width-220;
+        //    const height=displays[0].size.height-115;
+        //    console.log("x",width);
+        //    console.log("y",height);
+        //    console.log("getBounds",window.getBounds());
+           
+        //     window.setSize(200, 40);
+        //     window.setMaximizable(false);
+        //     window.setAlwaysOnTop(true);
+        //     window.setResizable(false);
+        //     window.setPosition(width, height);
+        //     window.setSkipTaskbar(true);
+        //     window.setResizable(false);
+        //     window.setFullScreenable(false);
+
+        // });
+        // window.on('unmaximize', toggleMaxRestoreButtons);
+
+        // closeButton.addEventListener("click", event => {
+        //     window = remote.getCurrentWindow();
+        //     window.close();
+        // });
+
+        // function toggleMaxRestoreButtons() {
+        //     window = remote.getCurrentWindow();
+        //     if (window.isMaximized()) {
+        //         maxButton.style.display = "none";
+        //         restoreButton.style.display = "flex";
+        //     } else {
+        //         restoreButton.style.display = "none";
+        //         maxButton.style.display = "flex";
+        //     }
+        // }
+    }
+})();
+    </script>
+  </body>
+</html>
